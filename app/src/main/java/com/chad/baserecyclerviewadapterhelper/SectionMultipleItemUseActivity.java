@@ -34,9 +34,9 @@ public class SectionMultipleItemUseActivity extends BaseActivity {
 
         // create adapter which extend BaseSectionMultiItemQuickAdapter provide your headerResId
         SectionMultipleItemAdapter sectionAdapter = new SectionMultipleItemAdapter(R.layout.def_section_head, mData);
-        sectionAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<SectionMultipleItem,BaseViewHolder>() {
+        sectionAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<SectionMultipleItem>() {
             @Override
-            public void onItemChildClick(BaseQuickAdapter<SectionMultipleItem,BaseViewHolder> adapter,View view,int position) {
+            public void onItemChildClick(BaseQuickAdapter<SectionMultipleItem,? extends BaseViewHolder> adapter,View view,int position) {
                 SectionMultipleItem item = adapter.getItem(position);
                 switch (view.getId()) {
                     case R.id.card_view:

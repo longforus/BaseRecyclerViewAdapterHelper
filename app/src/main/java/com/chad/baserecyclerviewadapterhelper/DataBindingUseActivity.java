@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
 import com.chad.baserecyclerviewadapterhelper.adapter.DataBindingUseAdapter;
 import com.chad.baserecyclerviewadapterhelper.base.BaseActivity;
 import com.chad.baserecyclerviewadapterhelper.entity.Movie;
 import com.chad.baserecyclerviewadapterhelper.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-
+import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -33,25 +32,25 @@ public class DataBindingUseActivity extends BaseActivity {
         mRecyclerView.setAdapter(mAdapter);
 
 
-        mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<Movie,DataBindingUseAdapter.MovieViewHolder>() {
+        mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<Movie>() {
             @Override
-            public void onItemClick(BaseQuickAdapter<Movie,DataBindingUseAdapter.MovieViewHolder> adapter,View view,int position) {
+            public void onItemClick(BaseQuickAdapter<Movie,? extends BaseViewHolder> adapter,View view,int position) {
                 ToastUtils.showShortToast("onItemClick");
             }
         });
 
 
 
-        mAdapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener<Movie,DataBindingUseAdapter.MovieViewHolder>() {
+        mAdapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener<Movie>() {
             @Override
-            public boolean onItemChildLongClick(BaseQuickAdapter<Movie,DataBindingUseAdapter.MovieViewHolder> adapter,View view,int position) {
+            public boolean onItemChildLongClick(BaseQuickAdapter<Movie,? extends BaseViewHolder> adapter,View view,int position) {
                 ToastUtils.showShortToast("onItemChildLongClick");
                 return true;
             }
         });
-        mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener<Movie,DataBindingUseAdapter.MovieViewHolder>() {
+        mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener<Movie>() {
             @Override
-            public boolean onItemLongClick(BaseQuickAdapter<Movie,DataBindingUseAdapter.MovieViewHolder> adapter,View view,int position) {
+            public boolean onItemLongClick(BaseQuickAdapter<Movie,? extends BaseViewHolder> adapter,View view,int position) {
                 ToastUtils.showShortToast("onItemLongClick");
                 return true;
             }

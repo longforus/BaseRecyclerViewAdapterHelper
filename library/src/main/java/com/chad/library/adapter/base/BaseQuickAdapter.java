@@ -96,10 +96,10 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * Use with {@link #openLoadAnimation}
      */
     public static final int SLIDEIN_RIGHT = 0x00000005;
-    private OnItemClickListener<T,K> mOnItemClickListener;
-    private OnItemLongClickListener<T,K> mOnItemLongClickListener;
-    private OnItemChildClickListener<T,K> mOnItemChildClickListener;
-    private OnItemChildLongClickListener<T,K> mOnItemChildLongClickListener;
+    private OnItemClickListener<T> mOnItemClickListener;
+    private OnItemLongClickListener<T> mOnItemLongClickListener;
+    private OnItemChildClickListener<T> mOnItemChildClickListener;
+    private OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
     private boolean mFirstOnlyEnable = true;
     private boolean mOpenAnimationEnable = false;
     private Interpolator mInterpolator = new LinearInterpolator();
@@ -1928,14 +1928,14 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * view has been clicked
      */
     @FunctionalInterface
-    public interface OnItemChildClickListener<T,K extends BaseViewHolder> {
+    public interface OnItemChildClickListener<T> {
         /**
          * callback method to be invoked when an itemchild in this view has been click
          * @param adapter
          * @param view     The view whihin the ItemView that was clicked
          * @param position The position of the view int the adapter
          */
-        void onItemChildClick(BaseQuickAdapter<T, K> adapter, View view, int position);
+        void onItemChildClick(BaseQuickAdapter<T, ? extends BaseViewHolder> adapter, View view, int position);
     }
 
 
@@ -1944,7 +1944,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * view has been clicked and held.
      */
     @FunctionalInterface
-    public interface OnItemChildLongClickListener<T,K extends BaseViewHolder> {
+    public interface OnItemChildLongClickListener<T> {
         /**
          * callback method to be invoked when an item in this view has been
          * click and held
@@ -1953,7 +1953,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
          * @param position The position of the view int the adapter
          * @return true if the callback consumed the long click ,false otherwise
          */
-        boolean onItemChildLongClick(BaseQuickAdapter<T, K> adapter, View view, int position);
+        boolean onItemChildLongClick(BaseQuickAdapter<T, ? extends BaseViewHolder> adapter, View view, int position);
     }
 
     /**
@@ -1961,7 +1961,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * view has been clicked and held.
      */
     @FunctionalInterface
-    public interface OnItemLongClickListener<T,K extends BaseViewHolder> {
+    public interface OnItemLongClickListener<T> {
         /**
          * callback method to be invoked when an item in this view has been
          * click and held
@@ -1970,7 +1970,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
          * @param position The position of the view int the adapter
          * @return true if the callback consumed the long click ,false otherwise
          */
-        boolean onItemLongClick(BaseQuickAdapter<T, K> adapter, View view, int position);
+        boolean onItemLongClick(BaseQuickAdapter<T, ? extends BaseViewHolder> adapter, View view, int position);
     }
 
 
@@ -1979,7 +1979,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * RecyclerView itemView has been clicked.
      */
     @FunctionalInterface
-    public interface OnItemClickListener<T,K extends BaseViewHolder> {
+    public interface OnItemClickListener<T> {
 
         /**
          * Callback method to be invoked when an item in this RecyclerView has
@@ -1989,7 +1989,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
          *                 will be a view provided by the adapter)
          * @param position The position of the view in the adapter.
          */
-        void onItemClick(BaseQuickAdapter<T, K> adapter, View view, int position);
+        void onItemClick(BaseQuickAdapter<T, ? extends BaseViewHolder > adapter, View view, int position);
     }
 
     /**
@@ -1998,7 +1998,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      *
      * @param listener The callback that will be invoked.
      */
-    public void setOnItemClickListener(@Nullable OnItemClickListener<T,K> listener) {
+    public void setOnItemClickListener(@Nullable OnItemClickListener<T> listener) {
         mOnItemClickListener = listener;
     }
 
@@ -2008,7 +2008,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      *
      * @param listener The callback that will run
      */
-    public void setOnItemChildClickListener(OnItemChildClickListener<T,K> listener) {
+    public void setOnItemChildClickListener(OnItemChildClickListener<T> listener) {
         mOnItemChildClickListener = listener;
     }
 
@@ -2018,7 +2018,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      *
      * @param listener The callback that will run
      */
-    public void setOnItemLongClickListener(OnItemLongClickListener<T,K> listener) {
+    public void setOnItemLongClickListener(OnItemLongClickListener<T> listener) {
         mOnItemLongClickListener = listener;
     }
 
@@ -2028,7 +2028,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      *
      * @param listener The callback that will run
      */
-    public void setOnItemChildLongClickListener(OnItemChildLongClickListener<T,K> listener) {
+    public void setOnItemChildLongClickListener(OnItemChildLongClickListener<T> listener) {
         mOnItemChildLongClickListener = listener;
     }
 
@@ -2037,7 +2037,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * @return The callback to be invoked with an item in this RecyclerView has
      * been long clicked and held, or null id no callback as been set.
      */
-    public final OnItemLongClickListener<T,K> getOnItemLongClickListener() {
+    public final OnItemLongClickListener<T> getOnItemLongClickListener() {
         return mOnItemLongClickListener;
     }
 
@@ -2045,7 +2045,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * @return The callback to be invoked with an item in this RecyclerView has
      * been clicked and held, or null id no callback as been set.
      */
-    public final OnItemClickListener<T,K> getOnItemClickListener() {
+    public final OnItemClickListener<T> getOnItemClickListener() {
         return mOnItemClickListener;
     }
 
@@ -2054,7 +2054,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * been clicked, or null id no callback has been set.
      */
     @Nullable
-    public final OnItemChildClickListener<T,K> getOnItemChildClickListener() {
+    public final OnItemChildClickListener<T> getOnItemChildClickListener() {
         return mOnItemChildClickListener;
     }
 
@@ -2063,7 +2063,7 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * been long clicked, or null id no callback has been set.
      */
     @Nullable
-    public final OnItemChildLongClickListener<T,K> getOnItemChildLongClickListener() {
+    public final OnItemChildLongClickListener<T> getOnItemChildLongClickListener() {
         return mOnItemChildLongClickListener;
     }
 }

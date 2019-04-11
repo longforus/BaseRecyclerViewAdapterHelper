@@ -53,9 +53,9 @@ public class AnimationUseActivity extends Activity {
         mAnimationAdapter.openLoadAnimation();
         int mFirstPageItemCount = 3;
         mAnimationAdapter.setNotDoAnimationCount(mFirstPageItemCount);
-        mAnimationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<Status,BaseViewHolder>() {
+        mAnimationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<Status>() {
             @Override
-            public void onItemChildClick(BaseQuickAdapter<Status,BaseViewHolder> adapter,View view,int position) {
+            public void onItemChildClick(BaseQuickAdapter<Status,? extends BaseViewHolder> adapter,View view,int position) {
                 Status status = adapter.getItem(position);
                 String content = null;
                 switch (view.getId()) {
