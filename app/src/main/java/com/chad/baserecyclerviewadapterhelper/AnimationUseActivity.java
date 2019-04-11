@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.chad.baserecyclerviewadapterhelper.adapter.AnimationAdapter;
 import com.chad.baserecyclerviewadapterhelper.animation.CustomAnimation;
 import com.chad.baserecyclerviewadapterhelper.entity.Status;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.kyleduo.switchbutton.SwitchButton;
 
@@ -53,9 +53,10 @@ public class AnimationUseActivity extends Activity {
         mAnimationAdapter.openLoadAnimation();
         int mFirstPageItemCount = 3;
         mAnimationAdapter.setNotDoAnimationCount(mFirstPageItemCount);
-        mAnimationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<Status>() {
+        mAnimationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<Status,BaseViewHolder>() {
             @Override
-            public void onItemChildClick(Status status, View view, int position) {
+            public void onItemChildClick(BaseQuickAdapter<Status,BaseViewHolder> adapter,View view,int position) {
+                Status status = adapter.getItem(position);
                 String content = null;
                 switch (view.getId()) {
                     case R.id.img:

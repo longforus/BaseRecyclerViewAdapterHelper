@@ -19,7 +19,8 @@ import java.util.List;
 /**
  *
  */
-public class ItemClickAdapter extends BaseMultiItemQuickAdapter<ClickEntity, BaseViewHolder> implements BaseQuickAdapter.OnItemClickListener<Status>, BaseQuickAdapter.OnItemChildClickListener<Status> {
+public class ItemClickAdapter extends BaseMultiItemQuickAdapter<ClickEntity, BaseViewHolder> implements BaseQuickAdapter.OnItemClickListener<Status,BaseViewHolder>,
+    BaseQuickAdapter.OnItemChildClickListener<Status,BaseViewHolder> {
     private NestAdapter nestAdapter;
 
     public ItemClickAdapter(List<ClickEntity> data) {
@@ -69,12 +70,12 @@ public class ItemClickAdapter extends BaseMultiItemQuickAdapter<ClickEntity, Bas
     }
 
     @Override
-    public void onItemChildClick(Status status, View view, int position) {
+    public void onItemChildClick(BaseQuickAdapter<Status,BaseViewHolder> adapter,View view,int position) {
         Toast.makeText(Utils.getContext(), "childView click", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onItemClick(Status status, View view, int position) {
+    public void onItemClick(BaseQuickAdapter<Status,BaseViewHolder> adapter,View view,int position) {
         Logger.d("嵌套RecycleView item 收到: " + "点击了第 " + position + " 一次");
         Toast.makeText(Utils.getContext(), "嵌套RecycleView item 收到: " + "点击了第 " + position + " 一次", Toast.LENGTH_SHORT).show();
     }

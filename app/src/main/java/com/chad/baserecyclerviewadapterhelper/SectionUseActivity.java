@@ -13,6 +13,7 @@ import com.chad.baserecyclerviewadapterhelper.decoration.GridSectionAverageGapIt
 import com.chad.baserecyclerviewadapterhelper.entity.MySection;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 /**
@@ -34,9 +35,9 @@ public class SectionUseActivity extends BaseActivity {
         mData = DataServer.getSampleData();
         SectionAdapter sectionAdapter = new SectionAdapter(R.layout.item_section_content, R.layout.def_section_head, mData);
 
-        sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<MySection>() {
+        sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<MySection,BaseViewHolder>() {
             @Override
-            public void onItemClick(MySection item, View view, int position) {
+            public void onItemClick(BaseQuickAdapter<MySection,BaseViewHolder> adapter,View view,int position) {
                 MySection mySection = mData.get(position);
                 if (mySection.isHeader)
                     Toast.makeText(SectionUseActivity.this, mySection.header, Toast.LENGTH_LONG).show();
@@ -44,9 +45,9 @@ public class SectionUseActivity extends BaseActivity {
                     Toast.makeText(SectionUseActivity.this, mySection.t.getName(), Toast.LENGTH_LONG).show();
             }
         });
-        sectionAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<MySection>() {
+        sectionAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<MySection,BaseViewHolder>() {
             @Override
-            public void onItemChildClick(MySection item, View view, int position) {
+            public void onItemChildClick(BaseQuickAdapter<MySection,BaseViewHolder> adapter,View view,int position) {
                 Toast.makeText(SectionUseActivity.this, "onItemChildClick" + position, Toast.LENGTH_LONG).show();
             }
         });

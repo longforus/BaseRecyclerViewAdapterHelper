@@ -13,6 +13,7 @@ import com.chad.baserecyclerviewadapterhelper.base.BaseActivity;
 import com.chad.baserecyclerviewadapterhelper.entity.ClickEntity;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,31 +35,31 @@ public class ItemClickActivity extends BaseActivity {
         mRecyclerView = findViewById(R.id.list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         initAdapter();
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<ClickEntity>() {
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<ClickEntity,BaseViewHolder>() {
             @Override
-            public void onItemClick(ClickEntity adapter, View view, int position) {
+            public void onItemClick(BaseQuickAdapter<ClickEntity,BaseViewHolder> adapter,View view,int position) {
                 Log.d(TAG, "onItemClick: ");
                 Toast.makeText(ItemClickActivity.this, "onItemClick" + position, Toast.LENGTH_SHORT).show();
             }
         });
-        adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener<ClickEntity>() {
+        adapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener<ClickEntity,BaseViewHolder>() {
             @Override
-            public boolean onItemLongClick(ClickEntity adapter, View view, int position) {
+            public boolean onItemLongClick(BaseQuickAdapter<ClickEntity,BaseViewHolder> adapter,View view,int position) {
                 Log.d(TAG, "onItemLongClick: ");
                 Toast.makeText(ItemClickActivity.this, "onItemLongClick" + position, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
-        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<ClickEntity>() {
+        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<ClickEntity,BaseViewHolder>() {
             @Override
-            public void onItemChildClick(ClickEntity adapter, View view, int position) {
+            public void onItemChildClick(BaseQuickAdapter<ClickEntity,BaseViewHolder> adapter,View view,int position) {
                 Log.d(TAG, "onItemChildClick: ");
                 Toast.makeText(ItemClickActivity.this, "onItemChildClick" + position, Toast.LENGTH_SHORT).show();
             }
         });
-        adapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener<ClickEntity>() {
+        adapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener<ClickEntity,BaseViewHolder>() {
             @Override
-            public boolean onItemChildLongClick(ClickEntity adapter, View view, int position) {
+            public boolean onItemChildLongClick(BaseQuickAdapter<ClickEntity,BaseViewHolder> adapter,View view,int position) {
                 Log.d(TAG, "onItemChildLongClick: ");
                 Toast.makeText(ItemClickActivity.this, "onItemChildLongClick" + position, Toast.LENGTH_SHORT).show();
                 return true;
