@@ -24,7 +24,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
  */
 public class PullToRefreshAdapter extends BaseQuickAdapter<Status, BaseViewHolder> {
     public PullToRefreshAdapter() {
-        super(R.layout.layout_animation, null);
+        super(R.layout.layout_animation, null,null);
     }
 
     @Override
