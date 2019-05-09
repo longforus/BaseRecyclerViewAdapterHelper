@@ -68,11 +68,11 @@ public class EmptyViewUseActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 if (mError) {
-                    mQuickAdapter.setEmptyView(errorView);
+                    mQuickAdapter.configEmptyView(errorView);
                     mError = false;
                 } else {
                     if (mNoData) {
-                        mQuickAdapter.setEmptyView(notDataView);
+                        mQuickAdapter.configEmptyView(notDataView);
                         mNoData = false;
                     } else {
                         mQuickAdapter.setNewData(DataServer.getSampleData(10));

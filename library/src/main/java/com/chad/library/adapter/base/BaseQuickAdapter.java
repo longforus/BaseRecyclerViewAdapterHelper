@@ -16,6 +16,7 @@
 package com.chad.library.adapter.base;
 
 import android.animation.Animator;
+import android.arch.paging.PagedList;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.support.annotation.IdRes;
@@ -57,6 +58,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -113,6 +116,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     private LinearLayout mFooterLayout;
     //empty
     private FrameLayout mEmptyLayout;
+    private View mEmptyView;
     private boolean mIsUseEmpty = true;
     private boolean mHeadAndEmptyEnable;
     private boolean mFootAndEmptyEnable;
@@ -173,6 +177,9 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         }
         setRecyclerView(recyclerView);
         getRecyclerView().setAdapter(this);
+        if (sEmptyLayoutConfig != null) {
+            setEmptyView(sEmptyLayoutConfig.layoutID,(ViewGroup)getRecyclerView().getParent());
+        }
     }
 
     /**
@@ -714,6 +721,54 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             count = getHeaderLayoutCount() + getAdapterCount() + getFooterLayoutCount() + getLoadMoreViewCount();
         }
         return count;
+    }
+
+
+    public static  EmptyLayoutConfig  sEmptyLayoutConfig;
+
+    @Override
+    public void submitList(PagedList<T> pagedList) {
+        if ((getAdapterCount() == 0) && ((pagedList == null) || (pagedList.size() == 0))) {
+            setEmptyViewState(1);
+            if (pagedList != null) {
+                pagedList.addWeakCallback(null,new PagedList.Callback() {
+                    @Override
+                    public void onChanged(int position,int count) {
+                        onPagedListOnChanged(position,count);
+                    }
+
+                    @Override
+                    public void onInserted(int position,int count) {
+                        onPagedListOnInserted(position,count);
+                    }
+
+                    @Override
+                    public void onRemoved(int position,int count) {
+                        onPagedListOnRemoved(position,count);
+                    }
+                });
+            }
+        }
+        super.submitList(pagedList);
+    }
+
+    protected void onPagedListOnRemoved(int position,int count) {
+
+    }
+
+    protected void onPagedListOnInserted(int position,int count) {
+        if (position == 0 && count != 0) {
+            if (mEmptyLayout != null) {
+                if (mEmptyLayout.getChildCount() != 0) {
+                    mEmptyLayout.removeAllViews();
+                    notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+    protected void onPagedListOnChanged(int position,int count) {
+
     }
 
     @Override
@@ -1333,8 +1388,10 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     }
 
     public void setEmptyView(int layoutResId,ViewGroup viewGroup) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(layoutResId,viewGroup,false);
-        setEmptyView(view);
+        if (mEmptyView==null) {
+            mEmptyView = LayoutInflater.from(viewGroup.getContext()).inflate(layoutResId,viewGroup,false);
+        }
+        configEmptyView(mEmptyView);
     }
 
     /**
@@ -1348,7 +1405,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         setEmptyView(layoutResId,getRecyclerView());
     }
 
-    public void setEmptyView(View emptyView) {
+    public void configEmptyView(View emptyView) {
         boolean insert = false;
         if (mEmptyLayout == null) {
             mEmptyLayout = new FrameLayout(emptyView.getContext());
@@ -1363,6 +1420,14 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         }
         mEmptyLayout.removeAllViews();
         mEmptyLayout.addView(emptyView);
+        if (sEmptyLayoutConfig != null) {
+            emptyView.findViewById(sEmptyLayoutConfig.retryId).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onRetryLoad();
+                }
+            });
+        }
         mIsUseEmpty = true;
         if (insert && getEmptyViewCount() == 1) {
             int position = 0;
@@ -1372,6 +1437,37 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             notifyItemInserted(position);
         }
     }
+
+    public Function0<Unit> onRetryFun;
+
+    public void onRetryLoad() {
+        setEmptyViewState(0);
+        if (onRetryFun != null) {
+            onRetryFun.invoke();
+        }
+    }
+
+    public void setEmptyViewState(int state) {
+        View loading = mEmptyView.findViewById(sEmptyLayoutConfig.loadingGroupId);
+        loading.setVisibility(View.GONE);
+        View empty = mEmptyView.findViewById(sEmptyLayoutConfig.emptyGroupId);
+        empty.setVisibility(View.GONE);
+        View error = mEmptyView.findViewById(sEmptyLayoutConfig.errorGroupId);
+        error.setVisibility(View.GONE);
+        switch (state) {
+            case 0:
+                loading.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                empty.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                error.setVisibility(View.VISIBLE);
+                break;
+            default:
+        }
+    }
+
 
     /**
      * Call before {@link RecyclerView#setAdapter(RecyclerView.Adapter)}
@@ -1405,8 +1501,12 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      *
      * @return The view to show if the adapter is empty.
      */
-    public View getEmptyView() {
+    public FrameLayout getEmptyLayout() {
         return mEmptyLayout;
+    }
+
+    public View getEmptyView() {
+        return mEmptyView;
     }
 
     @Deprecated
@@ -1900,7 +2000,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * @param view The view whihin the ItemView that was clicked
          * @param position The position of the view int the adapter
          */
-        void onItemChildClick(T item, View view, int position);
+        void onItemChildClick(T item,View view,int position);
     }
 
     /**
@@ -1917,7 +2017,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * @param position The position of the view int the adapter
          * @return true if the callback consumed the long click ,false otherwise
          */
-        boolean onItemChildLongClick(T item, View view, int position);
+        boolean onItemChildLongClick(T item,View view,int position);
     }
 
     /**
@@ -1934,7 +2034,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * @param position The position of the view int the adapter
          * @return true if the callback consumed the long click ,false otherwise
          */
-        boolean onItemLongClick(T item, View view, int position);
+        boolean onItemLongClick(T item,View view,int position);
     }
 
     /**
@@ -1952,7 +2052,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * will be a view provided by the adapter)
          * @param position The position of the view in the adapter.
          */
-        void onItemClick(T item, View view, int position);
+        void onItemClick(T item,View view,int position);
     }
 
     /**
