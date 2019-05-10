@@ -137,7 +137,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     private boolean mUpFetching;
     private UpFetchListener mUpFetchListener;
     private RecyclerView mRecyclerView;
-    private int mPreLoadNumber = 1;
+    private int mPreLoadNumber = 10;
 
     /**
      * start up fetch position, default is 1.
@@ -341,8 +341,10 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * @return 0 or 1
      */
     public int getLoadMoreViewCount() {
-        if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
-            return 0;
+        if (!usePaged) {
+            if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
+                return 0;
+            }
         }
         if (!mNextLoadEnable && mLoadMoreView.isLoadEndMoreGone()) {
             return 0;
@@ -486,6 +488,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     public BaseQuickAdapter(@LayoutRes int layoutResId,@Nullable List<T> data,@Nullable DiffUtil.ItemCallback<T> diffCallback) {
         super(diffCallback == null ? new DefaultDiffCallback<T>() : diffCallback);
         usePaged = diffCallback != null;
+        setEnableLoadMore(usePaged);
         this.mData = data == null ? new ArrayList<T>() : data;
         if (layoutResId != 0) {
             this.mLayoutResId = layoutResId;
@@ -723,30 +726,33 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         return count;
     }
 
-
-    public static  EmptyLayoutConfig  sEmptyLayoutConfig;
+    public static EmptyLayoutConfig sEmptyLayoutConfig;
 
     @Override
     public void submitList(PagedList<T> pagedList) {
-        if ((getAdapterCount() == 0) && ((pagedList == null) || (pagedList.size() == 0))) {
-            setEmptyViewState(1);
-            if (pagedList != null) {
-                pagedList.addWeakCallback(null,new PagedList.Callback() {
-                    @Override
-                    public void onChanged(int position,int count) {
-                        onPagedListOnChanged(position,count);
-                    }
+        if (pagedList == null || pagedList.size() == 0) {
+            if (getAdapterCount() == 0) {
+                setEmptyViewState(1);
+                if (pagedList != null) {
+                    pagedList.addWeakCallback(null,new PagedList.Callback() {
+                        @Override
+                        public void onChanged(int position,int count) {
+                            onPagedListOnChanged(position,count);
+                        }
 
-                    @Override
-                    public void onInserted(int position,int count) {
-                        onPagedListOnInserted(position,count);
-                    }
+                        @Override
+                        public void onInserted(int position,int count) {
+                            onPagedListOnInserted(position,count);
+                        }
 
-                    @Override
-                    public void onRemoved(int position,int count) {
-                        onPagedListOnRemoved(position,count);
-                    }
-                });
+                        @Override
+                        public void onRemoved(int position,int count) {
+                            onPagedListOnRemoved(position,count);
+                        }
+                    });
+                }
+            } else {
+               mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
             }
         }
         super.submitList(pagedList);
@@ -1388,7 +1394,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     }
 
     public void setEmptyView(int layoutResId,ViewGroup viewGroup) {
-        if (mEmptyView==null) {
+        if (mEmptyView == null) {
             mEmptyView = LayoutInflater.from(viewGroup.getContext()).inflate(layoutResId,viewGroup,false);
         }
         configEmptyView(mEmptyView);
@@ -1468,7 +1474,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         }
     }
 
-
     /**
      * Call before {@link RecyclerView#setAdapter(RecyclerView.Adapter)}
      *
@@ -1531,7 +1536,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             return;
         }
         mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
-        if (!mLoading) {
+        if (!mLoading && !usePaged) {
             mLoading = true;
             if (getRecyclerView() != null) {
                 getRecyclerView().post(new Runnable() {
