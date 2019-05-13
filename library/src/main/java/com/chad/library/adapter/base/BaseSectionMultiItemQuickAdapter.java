@@ -41,7 +41,7 @@ public abstract class BaseSectionMultiItemQuickAdapter<T extends SectionMultiEnt
 
     @Override
     protected int getDefItemViewType(int position) {
-        T item = mData.get(position);
+        T item = getItem(position);
 
         if (item != null) {
             // check the item type include header or not

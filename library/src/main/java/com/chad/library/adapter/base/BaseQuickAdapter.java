@@ -826,7 +826,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
 
     protected int getDefItemViewType(int position) {
         if (mMultiTypeDelegate != null) {
-            return mMultiTypeDelegate.getDefItemViewType(mData,position);
+            return mMultiTypeDelegate.getDefItemViewType(getItem(position));
         }
         return super.getItemViewType(position);
     }
@@ -1454,6 +1454,9 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     }
 
     public void setEmptyViewState(int state) {
+        if (mEmptyView == null) {
+            return;
+        }
         View loading = mEmptyView.findViewById(sEmptyLayoutConfig.loadingGroupId);
         loading.setVisibility(View.GONE);
         View empty = mEmptyView.findViewById(sEmptyLayoutConfig.emptyGroupId);

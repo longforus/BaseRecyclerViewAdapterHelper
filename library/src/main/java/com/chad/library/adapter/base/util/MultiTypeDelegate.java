@@ -3,8 +3,6 @@ package com.chad.library.adapter.base.util;
 import android.support.annotation.LayoutRes;
 import android.util.SparseIntArray;
 
-import java.util.List;
-
 import static com.chad.library.adapter.base.BaseMultiItemQuickAdapter.TYPE_NOT_FOUND;
 
 /**
@@ -31,8 +29,7 @@ public abstract class MultiTypeDelegate<T> {
     public MultiTypeDelegate() {
     }
 
-    public final int getDefItemViewType(List<T> data, int position) {
-        T item = data.get(position);
+    public final int getDefItemViewType(T item) {
         return item != null ? getItemType(item) : DEFAULT_VIEW_TYPE;
     }
 
