@@ -384,16 +384,23 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      */
     public void loadMoreEnd(boolean gone) {
         if (getLoadMoreViewCount() == 0) {
+            setLoadingViewState(gone);
             return;
         }
         mLoading = false;
         mNextLoadEnable = false;
-        mLoadMoreView.setLoadMoreEndGone(gone);
-        if (gone) {
-            notifyItemRemoved(getLoadMoreViewPosition());
-        } else {
-            mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_END);
-            notifyItemChanged(getLoadMoreViewPosition());
+        setLoadingViewState(gone);
+    }
+
+    public void setLoadingViewState(boolean gone) {
+        if (mLoadMoreView!=null) {
+            mLoadMoreView.setLoadMoreEndGone(gone);
+            if (gone) {
+                notifyItemRemoved(getLoadMoreViewPosition());
+            } else {
+                mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_END);
+                notifyItemChanged(getLoadMoreViewPosition());
+            }
         }
     }
 
