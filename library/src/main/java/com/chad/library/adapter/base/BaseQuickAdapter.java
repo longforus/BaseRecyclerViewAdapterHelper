@@ -393,13 +393,13 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     }
 
     public void setLoadingViewState(boolean gone) {
-        if (mLoadMoreView!=null) {
+        if (mLoadMoreView != null) {
             mLoadMoreView.setLoadMoreEndGone(gone);
             if (gone) {
                 notifyItemRemoved(getLoadMoreViewPosition());
             } else {
                 mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_END);
-                notifyItemChanged(getLoadMoreViewPosition());
+                notifyDataSetChanged();
             }
         }
     }
@@ -740,26 +740,32 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         if (pagedList == null || pagedList.size() == 0) {
             if (getAdapterCount() == 0) {
                 setEmptyViewState(1);
-                if (pagedList != null) {
-                    pagedList.addWeakCallback(null,new PagedList.Callback() {
-                        @Override
-                        public void onChanged(int position,int count) {
-                            onPagedListOnChanged(position,count);
-                        }
-
-                        @Override
-                        public void onInserted(int position,int count) {
-                            onPagedListOnInserted(position,count);
-                        }
-
-                        @Override
-                        public void onRemoved(int position,int count) {
-                            onPagedListOnRemoved(position,count);
-                        }
-                    });
-                }
             } else {
-               mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
+                PagedList<T> mCurrentList = getCurrentList();
+                if (mCurrentList!=null) {
+                    mCurrentList.clear();
+                }
+                getRecyclerView().getRecycledViewPool().clear();
+                notifyDataSetChanged();
+                mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
+            }
+            if (pagedList != null) {
+                pagedList.addWeakCallback(null,new PagedList.Callback() {
+                    @Override
+                    public void onChanged(int position,int count) {
+                        onPagedListOnChanged(position,count);
+                    }
+
+                    @Override
+                    public void onInserted(int position,int count) {
+                        onPagedListOnInserted(position,count);
+                    }
+
+                    @Override
+                    public void onRemoved(int position,int count) {
+                        onPagedListOnRemoved(position,count);
+                    }
+                });
             }
         }
         super.submitList(pagedList);
