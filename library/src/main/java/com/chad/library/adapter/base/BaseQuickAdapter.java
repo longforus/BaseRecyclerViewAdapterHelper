@@ -741,10 +741,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             if (getAdapterCount() == 0) {
                 setEmptyViewState(1);
             } else {
-                PagedList<T> mCurrentList = getCurrentList();
-                if (mCurrentList!=null) {
-                    mCurrentList.clear();
-                }
                 getRecyclerView().getRecycledViewPool().clear();
                 notifyDataSetChanged();
                 mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
@@ -834,6 +830,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     }
 
     public int getAdapterCount() {
+        //todo padgedList  不支持直接添加项目,我现在有一个大胆的想法,pagedList和mData同用会不会能解决这个问题呢?
         return usePaged ? super.getItemCount() : mData.size();
     }
 
