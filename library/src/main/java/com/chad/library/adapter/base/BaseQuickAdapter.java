@@ -739,7 +739,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     public void submitList(PagedList<T> pagedList) {
         if (pagedList == null || pagedList.size() == 0) {
             if (getAdapterCount() == 0) {
-                setEmptyViewState(1);
+                setEmptyViewState(0);
             } else {
                 getRecyclerView().getRecycledViewPool().clear();
                 notifyDataSetChanged();
