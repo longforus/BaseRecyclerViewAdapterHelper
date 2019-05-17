@@ -341,10 +341,17 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * @return 0 or 1
      */
     public int getLoadMoreViewCount() {
-        if (!usePaged) {
-            if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
+        if (usePaged) {
+            if (!mLoadMoreEnable) {
                 return 0;
             }
+            //if (getAdapterCount() == 0) {
+            //    return 0;
+            //}
+            return 1;
+        }
+        if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
+            return 0;
         }
         if (!mNextLoadEnable && mLoadMoreView.isLoadEndMoreGone()) {
             return 0;
@@ -441,12 +448,16 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
 
         if (oldLoadMoreCount == 1) {
             if (newLoadMoreCount == 0) {
-                notifyItemRemoved(getLoadMoreViewPosition());
+                //notifyItemRemoved(getLoadMoreViewPosition());
+                notifyDataSetChanged();
             }
         } else {
             if (newLoadMoreCount == 1) {
-                mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_DEFAULT);
-                notifyItemInserted(getLoadMoreViewPosition());
+                if (!usePaged) {
+                    mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_DEFAULT);
+                }
+                //notifyItemInserted(getLoadMoreViewPosition());
+                notifyDataSetChanged();
             }
         }
     }
@@ -495,7 +506,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     public BaseQuickAdapter(@LayoutRes int layoutResId,@Nullable List<T> data,@Nullable DiffUtil.ItemCallback<T> diffCallback) {
         super(diffCallback == null ? new DefaultDiffCallback<T>() : diffCallback);
         usePaged = diffCallback != null;
-        setEnableLoadMore(usePaged);
         this.mData = data == null ? new ArrayList<T>() : data;
         if (layoutResId != 0) {
             this.mLayoutResId = layoutResId;
@@ -738,11 +748,10 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     @Override
     public void submitList(PagedList<T> pagedList) {
         if (pagedList == null || pagedList.size() == 0) {
+            setEnableLoadMore(false);
             if (getAdapterCount() == 0) {
                 setEmptyViewState(0);
             } else {
-                getRecyclerView().getRecycledViewPool().clear();
-                notifyDataSetChanged();
                 mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
             }
             if (pagedList != null) {
@@ -779,6 +788,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
                     notifyDataSetChanged();
                 }
             }
+            setEnableLoadMore(true);
         }
     }
 
@@ -1548,18 +1558,20 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         if (mLoadMoreView.getLoadMoreStatus() != LoadMoreView.STATUS_DEFAULT) {
             return;
         }
-        mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
-        if (!mLoading && !usePaged) {
-            mLoading = true;
-            if (getRecyclerView() != null) {
-                getRecyclerView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestLoadMoreListener.onLoadMoreRequested();
-                    }
-                });
-            } else {
-                mRequestLoadMoreListener.onLoadMoreRequested();
+        if (!usePaged) {
+            mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
+            if (!mLoading) {
+                mLoading = true;
+                if (getRecyclerView() != null) {
+                    getRecyclerView().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRequestLoadMoreListener.onLoadMoreRequested();
+                        }
+                    });
+                } else {
+                    mRequestLoadMoreListener.onLoadMoreRequested();
+                }
             }
         }
     }
