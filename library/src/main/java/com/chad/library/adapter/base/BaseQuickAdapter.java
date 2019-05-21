@@ -112,8 +112,8 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     protected BaseAnimation mCustomAnimation;
     protected BaseAnimation mSelectAnimation = new AlphaInAnimation();
     //header footer
-   protected LinearLayout mHeaderLayout;
-   protected LinearLayout mFooterLayout;
+    protected LinearLayout mHeaderLayout;
+    protected LinearLayout mFooterLayout;
     //empty
     protected FrameLayout mEmptyLayout;
     protected View mEmptyView;
@@ -341,17 +341,10 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * @return 0 or 1
      */
     public int getLoadMoreViewCount() {
-        if (usePaged) {
-            if (!mLoadMoreEnable) {
+        if (!usePaged) {
+            if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
                 return 0;
             }
-            //if (getAdapterCount() == 0) {
-            //    return 0;
-            //}
-            return 1;
-        }
-        if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
-            return 0;
         }
         if (!mNextLoadEnable && mLoadMoreView.isLoadEndMoreGone()) {
             return 0;
@@ -752,7 +745,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         if (mCurrentList != currentList) {
             mCurrentList = currentList;
             if (mCurrentList == null || mCurrentList.size() == 0) {
-                setEnableLoadMore(false);
+                //setEnableLoadMore(false);
                 setEmptyViewState(0);
                 if (getAdapterCount() != 0) {
                     mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
@@ -791,7 +784,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
                 mIsUseEmpty = false;
                 notifyDataSetChanged();
             }
-            setEnableLoadMore(true);
+            //setEnableLoadMore(true);
         }
     }
 
