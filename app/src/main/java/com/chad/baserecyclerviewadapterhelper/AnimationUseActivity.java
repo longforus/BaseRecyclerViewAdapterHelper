@@ -2,17 +2,16 @@ package com.chad.baserecyclerviewadapterhelper;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.chad.baserecyclerviewadapterhelper.adapter.AnimationAdapter;
 import com.chad.baserecyclerviewadapterhelper.animation.CustomAnimation;
 import com.chad.baserecyclerviewadapterhelper.entity.Status;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.kyleduo.switchbutton.SwitchButton;
 
@@ -54,9 +53,10 @@ public class AnimationUseActivity extends Activity {
         int mFirstPageItemCount = 3;
         mAnimationAdapter.setNotDoAnimationCount(mFirstPageItemCount);
         mAnimationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<Status>() {
+
             @Override
-            public void onItemChildClick(BaseQuickAdapter<Status,? extends BaseViewHolder> adapter,View view,int position) {
-                Status status = adapter.getItem(position);
+            public void onItemChildClick(Status item,View view,int position) {
+                Status status = mAnimationAdapter.getItem(position);
                 String content = null;
                 switch (view.getId()) {
                     case R.id.img:
@@ -75,6 +75,7 @@ public class AnimationUseActivity extends Activity {
 
                 }
             }
+
         });
         //不在使用强转
     /*    mAnimationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
