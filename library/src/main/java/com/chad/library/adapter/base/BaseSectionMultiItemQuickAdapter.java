@@ -4,6 +4,7 @@ import android.util.SparseIntArray;
 import android.view.ViewGroup;
 import androidx.annotation.IntRange;
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import com.chad.library.adapter.base.entity.IExpandable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.chad.library.adapter.base.entity.SectionMultiEntity;
@@ -84,7 +85,7 @@ public abstract class BaseSectionMultiItemQuickAdapter<T extends SectionMultiEnt
     }
 
     @Override
-    public void onBindViewHolder(K holder, int position) {
+    public void onBindViewHolder(@NonNull K holder, int position) {
         switch (holder.getItemViewType()) {
             case SECTION_HEADER_VIEW:
                 setFullSpan(holder);

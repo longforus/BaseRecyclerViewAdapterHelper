@@ -1,16 +1,15 @@
 package com.chad.baserecyclerviewadapterhelper;
 
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.chad.baserecyclerviewadapterhelper.adapter.SectionMultipleItemAdapter;
 import com.chad.baserecyclerviewadapterhelper.base.BaseActivity;
 import com.chad.baserecyclerviewadapterhelper.data.DataServer;
 import com.chad.baserecyclerviewadapterhelper.entity.SectionMultipleItem;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 /**
@@ -36,8 +35,7 @@ public class SectionMultipleItemUseActivity extends BaseActivity {
         SectionMultipleItemAdapter sectionAdapter = new SectionMultipleItemAdapter(R.layout.def_section_head, mData);
         sectionAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<SectionMultipleItem>() {
             @Override
-            public void onItemChildClick(BaseQuickAdapter<SectionMultipleItem,? extends BaseViewHolder> adapter,View view,int position) {
-                SectionMultipleItem item = adapter.getItem(position);
+            public void onItemChildClick(SectionMultipleItem item,View view,int position) {
                 switch (view.getId()) {
                     case R.id.card_view:
                         // 获取主体item相应数据给后期使用

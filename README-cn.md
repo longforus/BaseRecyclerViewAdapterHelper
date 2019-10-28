@@ -1,4 +1,4 @@
->RecyclerView作为Android最常用的控件，受益群体几乎是所有Android开发者，希望更多开发者能够一起来维护这个项目，把这个项目做得更好，帮助更多人。**Star我的项目可加Q群558178792，申请的时候把GitHub的账号名字备注上否则不予通过，谢谢配合。**中国有句古话叫“授人以鱼不如授人以渔”，不仅仅提供使用，还写了如何实现的原理：
+>RecyclerView作为Android最常用的控件，受益群体几乎是所有Android开发者，希望更多开发者能够一起来维护这个项目，把这个项目做得更好，帮助更多人。中国有句古话叫“授人以鱼不如授人以渔”，不仅仅提供使用，还写了如何实现的原理：
 - 「[RecyclerView.Adapter优化了吗？](http://www.jianshu.com/p/411ab861034f)」
 - 「[BaseRecyclerAdapter之添加动画](http://www.jianshu.com/p/fa3f97c19263)」
 - 「[BaseRecyclerAdapter之添加不同布局（头部尾部）](http://www.jianshu.com/p/9d75c22f0964)」
@@ -14,7 +14,7 @@
 ![logo](http://upload-images.jianshu.io/upload_images/972352-1d77e0a75a4a7c0a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)  
 一个强大并且灵活的RecyclerViewAdapter，欢迎使用。（喜欢的可以**Star**一下）
 ## Google Play Demo
-
+## kotlin demo :[BRVAH_kotlin](https://github.com/AllenCoder/BRVAH_kotlin)
 [![Get it on Google Play](https://developer.android.com/images/brand/en_generic_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=com.chad.baserecyclerviewadapterhelper)
 # 它能做什么？（[下载 apk](https://github.com/CymChad/BaseRecyclerViewAdapterHelper/raw/master/demo_res/demo.apk)）
 - **优化Adapter代码（减少百分之70%代码）**
@@ -42,10 +42,10 @@
 然后在dependencies添加:
 ```
 	dependencies {
-	        compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
+	        compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
 	}
 ```
-## [androidX 迁移库版本](https://github.com/CymChad/BaseRecyclerViewAdapterHelper/releases/tag/2.9.45-androidx)
+## [androidX 迁移库版本](https://github.com/CymChad/BaseRecyclerViewAdapterHelper/releases/tag/2.9.47-androidx)
 
 # 如何使用它来创建Adapter？
 ![demo](https://github.com/CymChad/BaseRecyclerViewAdapterHelper/blob/master/demo_res/item_view.png)
@@ -163,7 +163,7 @@ Activity
                 Toast.makeText(RecyclerClickItemActivity.this, "" + Integer.toString(position), Toast.LENGTH_SHORT).show();
             }
         });
-``` 
+```
 
 
 # 如何使用它添加动画？
@@ -354,7 +354,7 @@ public class ExpandableItemAdapter extends BaseMultiItemQuickAdapter<MultiItemEn
     protected void convert(final BaseViewHolder holder, final MultiItemEntity item) {
         switch (holder.getItemViewType()) {
         case TYPE_LEVEL_0:
-            
+
             //set view content
            holder.itemView.setOnClickListener(new View.OnClickListener() {
                @Override
@@ -416,6 +416,111 @@ protected K createBaseViewHolder(View view) {
 }
 
 ```
+
+# DiffUtil
+先继承`BaseQuickDiffCallback<T>`并实现：
+```java
+public class DiffDemoCallback extends BaseQuickDiffCallback<DiffUtilDemoEntity> {
+
+    public DiffDemoCallback(@Nullable List<DiffUtilDemoEntity> newList) {
+        super(newList);
+    }
+
+    /**
+     * 判断是否是同一个item
+     *
+     * @param oldItem New data
+     * @param newItem old Data
+     * @return
+     */
+    @Override
+    protected boolean areItemsTheSame(DiffUtilDemoEntity oldItem, DiffUtilDemoEntity newItem) {
+……
+    }
+
+    /**
+     * 当是同一个item时，再判断内容是否发生改变
+     *
+     * @param oldItem New data
+     * @param newItem old Data
+     * @return
+     */
+    @Override
+    protected boolean areContentsTheSame(DiffUtilDemoEntity oldItem, DiffUtilDemoEntity newItem) {
+……
+    }
+
+    /**
+     * 可选实现
+     * 如果需要精确修改某一个view中的内容，请实现此方法。
+     * 如果不实现此方法，或者返回null，将会直接刷新整个item。
+     *
+     * @param oldItem Old data
+     * @param newItem New data
+     * @return Payload info. if return null, the entire item will be refreshed.
+     */
+    @Override
+    protected Object getChangePayload(DiffUtilDemoEntity oldItem, DiffUtilDemoEntity newItem) {
+……
+    }
+}
+```
+
+`BaseQuickAdapter`中实现`convertPayloads()`方法，用于局部更新：
+```java
+    /**
+     *
+     * 当有 payload info 时，只会执行此方法
+     *
+     * @param helper   A fully initialized helper.
+     * @param item     The item that needs to be displayed.
+     * @param payloads payload info.
+     */
+    @Override
+    protected void convertPayloads(BaseViewHolder helper, DiffUtilDemoEntity item, @NonNull List<Object> payloads) {
+        for (Object p : payloads) {
+……
+        }
+    }
+```
+
+更新整个数据集时，使用如下方法：
+```java
+DiffDemoCallback callback = new DiffDemoCallback(getNewList());
+mAdapter.setNewDiffData(callback);
+```
+
+更新单个item时，使用如下方法：
+```java
+mAdapter.notifyItemChanged(0, "payload info");
+```
+
+## 异步Diff & 原始DiffUtil.Callback
+用户可以直接使用`DiffUtil.Callback`，自己进行diff计算，将结果告知adapter即可。
+所以adapter并不关心diff计算过程，用户可以同步或是异步进行。
+使用如下方法：
+```java
+setNewDiffData(DiffUtil.DiffResult, List)}
+```
+例子：
+```java
+new Thread(new Runnable() {
+    @Override
+    public void run() {
+        final List<DiffUtilDemoEntity> newData = getNewList();
+        MyDiffCallback callback = new MyDiffCallback(newData, mAdapter.getData());
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback, false);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.setNewDiffData(diffResult, newData);
+            }
+        });
+    }
+}).start();
+```
+>警告：你应该自己进行多线程管理，防止内存泄漏
+
 
 >**持续更新!，所以推荐Star项目**
 

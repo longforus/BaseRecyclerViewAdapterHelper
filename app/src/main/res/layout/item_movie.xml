@@ -13,8 +13,7 @@
             type="com.chad.baserecyclerviewadapterhelper.entity.MoviePresenter"/>
     </data>
 
-    <androidx.cardview.widget.CardView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
                                         android:layout_width="match_parent"
                                         android:layout_height="175dp"
                                         app:cardBackgroundColor="@android:color/white"

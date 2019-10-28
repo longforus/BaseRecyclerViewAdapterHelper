@@ -1,11 +1,12 @@
 package com.chad.baserecyclerviewadapterhelper.base;
 
-import android.view.View;
-import android.view.ViewGroup;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import android.view.View;
+import android.view.ViewGroup;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public abstract class BaseDataBindingAdapter<T, B extends ViewDataBinding> exten
     }
 
     @Override
-    protected void convert(BaseBindingViewHolder<B> helper, T item) {
+    protected void convert(@NonNull BaseBindingViewHolder<B> helper, T item) {
         convert(helper.getBinding(), item);
         helper.getBinding().executePendingBindings();
     }
