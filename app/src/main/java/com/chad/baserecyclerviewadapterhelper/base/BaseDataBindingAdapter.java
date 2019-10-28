@@ -1,14 +1,12 @@
 package com.chad.baserecyclerviewadapterhelper.base;
 
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
-
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-
 import java.util.List;
 
 

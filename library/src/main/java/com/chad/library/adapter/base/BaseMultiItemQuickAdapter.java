@@ -1,11 +1,11 @@
 package com.chad.library.adapter.base;
 
-import android.support.annotation.IntRange;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
 import android.util.SparseIntArray;
 import android.view.ViewGroup;
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 import com.chad.library.adapter.base.entity.IExpandable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import java.util.List;

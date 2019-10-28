@@ -1,7 +1,7 @@
 package com.chad.library.adapter.base.util;
 
-import android.support.annotation.LayoutRes;
 import android.util.SparseIntArray;
+import androidx.annotation.LayoutRes;
 
 import static com.chad.library.adapter.base.BaseMultiItemQuickAdapter.TYPE_NOT_FOUND;
 
