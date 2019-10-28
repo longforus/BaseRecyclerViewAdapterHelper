@@ -16,20 +16,7 @@
 package com.chad.library.adapter.base;
 
 import android.animation.Animator;
-import android.arch.paging.PagedListAdapter;
 import android.content.Context;
-import android.support.annotation.IdRes;
-import android.support.annotation.IntDef;
-import android.support.annotation.IntRange;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.LayoutParams;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +24,19 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import androidx.annotation.IdRes;
+import androidx.annotation.IntDef;
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.paging.PagedList;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.chad.library.adapter.base.animation.AlphaInAnimation;
 import com.chad.library.adapter.base.animation.BaseAnimation;
 import com.chad.library.adapter.base.animation.ScaleInAnimation;
@@ -57,6 +57,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -67,14 +69,14 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends PagedListAdapter<T,K> {
 
     //load more
-    private boolean mNextLoadEnable = false;
-    private boolean mLoadMoreEnable = false;
-    private boolean mLoading = false;
-    private LoadMoreView mLoadMoreView = new SimpleLoadMoreView();
-    private RequestLoadMoreListener mRequestLoadMoreListener;
-    private boolean mEnableLoadMoreEndClick = false;
+    protected boolean mNextLoadEnable = false;
+    protected boolean mLoadMoreEnable = false;
+    protected boolean mLoading = false;
+    protected LoadMoreView mLoadMoreView = new SimpleLoadMoreView();
+    protected RequestLoadMoreListener mRequestLoadMoreListener;
+    protected boolean mEnableLoadMoreEndClick = false;
 
-    private boolean usePaged = false;
+    protected boolean usePaged = false;
     //Animation
     /**
      * Use with {@link #openLoadAnimation}
@@ -96,26 +98,27 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * Use with {@link #openLoadAnimation}
      */
     public static final int SLIDEIN_RIGHT = 0x00000005;
-    private OnItemClickListener<T> mOnItemClickListener;
-    private OnItemLongClickListener<T> mOnItemLongClickListener;
-    private OnItemChildClickListener<T> mOnItemChildClickListener;
-    private OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
-    private boolean mFirstOnlyEnable = true;
-    private boolean mOpenAnimationEnable = false;
-    private Interpolator mInterpolator = new LinearInterpolator();
-    private int mDuration = 300;
-    private int mLastPosition = -1;
+    protected OnItemClickListener<T> mOnItemClickListener;
+    protected OnItemLongClickListener<T> mOnItemLongClickListener;
+    protected OnItemChildClickListener<T> mOnItemChildClickListener;
+    protected OnItemChildLongClickListener<T> mOnItemChildLongClickListener;
+    protected boolean mFirstOnlyEnable = true;
+    protected boolean mOpenAnimationEnable = false;
+    protected Interpolator mInterpolator = new LinearInterpolator();
+    protected int mDuration = 300;
+    protected int mLastPosition = -1;
 
-    private BaseAnimation mCustomAnimation;
-    private BaseAnimation mSelectAnimation = new AlphaInAnimation();
+    protected BaseAnimation mCustomAnimation;
+    protected BaseAnimation mSelectAnimation = new AlphaInAnimation();
     //header footer
-    private LinearLayout mHeaderLayout;
-    private LinearLayout mFooterLayout;
+    protected LinearLayout mHeaderLayout;
+    protected LinearLayout mFooterLayout;
     //empty
-    private FrameLayout mEmptyLayout;
-    private boolean mIsUseEmpty = true;
-    private boolean mHeadAndEmptyEnable;
-    private boolean mFootAndEmptyEnable;
+    protected FrameLayout mEmptyLayout;
+    protected View mEmptyView;
+    protected boolean mIsUseEmpty = true;
+    protected boolean mHeadAndEmptyEnable;
+    protected boolean mFootAndEmptyEnable;
 
     protected static final String TAG = BaseQuickAdapter.class.getSimpleName();
     protected Context mContext;
@@ -129,21 +132,21 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     /**
      * up fetch start
      */
-    private boolean mUpFetchEnable;
-    private boolean mUpFetching;
-    private UpFetchListener mUpFetchListener;
-    private RecyclerView mRecyclerView;
-    private int mPreLoadNumber = 1;
+    protected boolean mUpFetchEnable;
+    protected boolean mUpFetching;
+    protected UpFetchListener mUpFetchListener;
+    protected RecyclerView mRecyclerView;
+    protected int mPreLoadNumber = 10;
 
     /**
      * start up fetch position, default is 1.
      */
-    private int mStartUpFetchPosition = 1;
+    protected int mStartUpFetchPosition = 1;
     /**
      * if asFlow is true, footer/header will arrange like normal item view.
      * only works when use {@link GridLayoutManager},and it will ignore span size.
      */
-    private boolean headerViewAsFlow, footerViewAsFlow;
+    protected boolean headerViewAsFlow, footerViewAsFlow;
 
     @IntDef( { ALPHAIN,SCALEIN,SLIDEIN_BOTTOM,SLIDEIN_LEFT,SLIDEIN_RIGHT })
     @Retention(RetentionPolicy.SOURCE)
@@ -173,6 +176,9 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         }
         setRecyclerView(recyclerView);
         getRecyclerView().setAdapter(this);
+        if (sEmptyLayoutConfig != null) {
+            setEmptyView(sEmptyLayoutConfig.layoutID,(ViewGroup)getRecyclerView().getParent());
+        }
     }
 
     /**
@@ -334,8 +340,10 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * @return 0 or 1
      */
     public int getLoadMoreViewCount() {
-        if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
-            return 0;
+        if (!usePaged) {
+            if (mRequestLoadMoreListener == null || !mLoadMoreEnable) {
+                return 0;
+            }
         }
         if (!mNextLoadEnable && mLoadMoreView.isLoadEndMoreGone()) {
             return 0;
@@ -375,16 +383,23 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      */
     public void loadMoreEnd(boolean gone) {
         if (getLoadMoreViewCount() == 0) {
+            setLoadingViewState(gone);
             return;
         }
         mLoading = false;
         mNextLoadEnable = false;
-        mLoadMoreView.setLoadMoreEndGone(gone);
-        if (gone) {
-            notifyItemRemoved(getLoadMoreViewPosition());
-        } else {
-            mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_END);
-            notifyItemChanged(getLoadMoreViewPosition());
+        setLoadingViewState(gone);
+    }
+
+    public void setLoadingViewState(boolean gone) {
+        if (mLoadMoreView != null) {
+            mLoadMoreView.setLoadMoreEndGone(gone);
+            if (gone) {
+                notifyItemRemoved(getLoadMoreViewPosition());
+            } else {
+                mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_END);
+                notifyDataSetChanged();
+            }
         }
     }
 
@@ -425,12 +440,16 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
 
         if (oldLoadMoreCount == 1) {
             if (newLoadMoreCount == 0) {
-                notifyItemRemoved(getLoadMoreViewPosition());
+                //notifyItemRemoved(getLoadMoreViewPosition());
+                notifyDataSetChanged();
             }
         } else {
             if (newLoadMoreCount == 1) {
-                mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_DEFAULT);
-                notifyItemInserted(getLoadMoreViewPosition());
+                if (!usePaged) {
+                    mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_DEFAULT);
+                }
+                //notifyItemInserted(getLoadMoreViewPosition());
+                notifyDataSetChanged();
             }
         }
     }
@@ -716,6 +735,62 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         return count;
     }
 
+    public static EmptyLayoutConfig sEmptyLayoutConfig;
+
+    protected PagedList<T> mCurrentList;
+
+    @Override
+    public void onCurrentListChanged(@Nullable PagedList<T> currentList) {
+        if (mCurrentList != currentList) {
+            mCurrentList = currentList;
+            if (mCurrentList == null || mCurrentList.size() == 0) {
+                //setEnableLoadMore(false);
+                setEmptyViewState(0);
+                if (getAdapterCount() != 0) {
+                    mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
+                }
+                if (mCurrentList != null) {
+                    mCurrentList.addWeakCallback(null,new PagedList.Callback() {
+                        @Override
+                        public void onChanged(int position,int count) {
+                            onPagedListOnChanged(position,count);
+                        }
+
+                        @Override
+                        public void onInserted(int position,int count) {
+                            onPagedListOnInserted(position,count);
+                        }
+
+                        @Override
+                        public void onRemoved(int position,int count) {
+                            onPagedListOnRemoved(position,count);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+
+
+    protected void onPagedListOnRemoved(int position,int count) {
+
+    }
+
+    protected void onPagedListOnInserted(int position,int count) {
+        if (position == 0 && count != 0) {
+            if (mIsUseEmpty) {
+                mIsUseEmpty = false;
+                notifyDataSetChanged();
+            }
+            //setEnableLoadMore(true);
+        }
+    }
+
+    protected void onPagedListOnChanged(int position,int count) {
+
+    }
+
     @Override
     public int getItemViewType(int position) {
         if (getEmptyViewCount() == 1) {
@@ -760,12 +835,13 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     }
 
     public int getAdapterCount() {
+        //todo padgedList  不支持直接添加项目,我现在有一个大胆的想法,pagedList和mData同用会不会能解决这个问题呢?
         return usePaged ? super.getItemCount() : mData.size();
     }
 
     protected int getDefItemViewType(int position) {
         if (mMultiTypeDelegate != null) {
-            return mMultiTypeDelegate.getDefItemViewType(mData,position);
+            return mMultiTypeDelegate.getDefItemViewType(getItem(position));
         }
         return super.getItemViewType(position);
     }
@@ -983,14 +1059,14 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * override this method if you want to override click event logic
      */
     public void setOnItemClick(View v,int position) {
-        getOnItemClickListener().onItemClick(this,v,position);
+        getOnItemClickListener().onItemClick(getItem(position),v,position);
     }
 
     /**
      * override this method if you want to override longClick event logic
      */
     public boolean setOnItemLongClick(View v,int position) {
-        return getOnItemLongClickListener().onItemLongClick(this,v,position);
+        return getOnItemLongClickListener().onItemLongClick(getItem(position),v,position);
     }
 
     private MultiTypeDelegate<T> mMultiTypeDelegate;
@@ -1136,10 +1212,10 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             mHeaderLayout = new LinearLayout(header.getContext());
             if (orientation == LinearLayout.VERTICAL) {
                 mHeaderLayout.setOrientation(LinearLayout.VERTICAL);
-                mHeaderLayout.setLayoutParams(new LayoutParams(MATCH_PARENT,WRAP_CONTENT));
+                mHeaderLayout.setLayoutParams(new RecyclerView.LayoutParams(MATCH_PARENT,WRAP_CONTENT));
             } else {
                 mHeaderLayout.setOrientation(LinearLayout.HORIZONTAL);
-                mHeaderLayout.setLayoutParams(new LayoutParams(WRAP_CONTENT,MATCH_PARENT));
+                mHeaderLayout.setLayoutParams(new RecyclerView.LayoutParams(WRAP_CONTENT,MATCH_PARENT));
             }
         }
         final int childCount = mHeaderLayout.getChildCount();
@@ -1200,10 +1276,10 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             mFooterLayout = new LinearLayout(footer.getContext());
             if (orientation == LinearLayout.VERTICAL) {
                 mFooterLayout.setOrientation(LinearLayout.VERTICAL);
-                mFooterLayout.setLayoutParams(new LayoutParams(MATCH_PARENT,WRAP_CONTENT));
+                mFooterLayout.setLayoutParams(new RecyclerView.LayoutParams(MATCH_PARENT,WRAP_CONTENT));
             } else {
                 mFooterLayout.setOrientation(LinearLayout.HORIZONTAL);
-                mFooterLayout.setLayoutParams(new LayoutParams(WRAP_CONTENT,MATCH_PARENT));
+                mFooterLayout.setLayoutParams(new RecyclerView.LayoutParams(WRAP_CONTENT,MATCH_PARENT));
             }
         }
         final int childCount = mFooterLayout.getChildCount();
@@ -1333,13 +1409,14 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     }
 
     public void setEmptyView(int layoutResId,ViewGroup viewGroup) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(layoutResId,viewGroup,false);
-        setEmptyView(view);
+        if (mEmptyView == null) {
+            mEmptyView = LayoutInflater.from(viewGroup.getContext()).inflate(layoutResId,viewGroup,false);
+        }
+        configEmptyView(mEmptyView);
     }
 
     /**
      * bind recyclerView {@link #bindToRecyclerView(RecyclerView)} before use!
-     * Recommend you to use {@link #setEmptyView(layoutResId,viewGroup)}
      *
      * @see #bindToRecyclerView(RecyclerView)
      */
@@ -1349,11 +1426,11 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         setEmptyView(layoutResId,getRecyclerView());
     }
 
-    public void setEmptyView(View emptyView) {
+    public void configEmptyView(View emptyView) {
         boolean insert = false;
         if (mEmptyLayout == null) {
             mEmptyLayout = new FrameLayout(emptyView.getContext());
-            final LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+            final RecyclerView.LayoutParams layoutParams = new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,RecyclerView.LayoutParams.MATCH_PARENT);
             final ViewGroup.LayoutParams lp = emptyView.getLayoutParams();
             if (lp != null) {
                 layoutParams.width = lp.width;
@@ -1364,6 +1441,14 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         }
         mEmptyLayout.removeAllViews();
         mEmptyLayout.addView(emptyView);
+        if (sEmptyLayoutConfig != null) {
+            emptyView.findViewById(sEmptyLayoutConfig.retryId).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onRetryLoad();
+                }
+            });
+        }
         mIsUseEmpty = true;
         if (insert && getEmptyViewCount() == 1) {
             int position = 0;
@@ -1372,6 +1457,40 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             }
             notifyItemInserted(position);
         }
+    }
+
+    public Function0<Unit> onRetryFun;
+
+    public void onRetryLoad() {
+        setEmptyViewState(0);
+        if (onRetryFun != null) {
+            onRetryFun.invoke();
+        }
+    }
+
+    public void setEmptyViewState(int state) {
+        if (mEmptyView == null) {
+            return;
+        }
+        View loading = mEmptyView.findViewById(sEmptyLayoutConfig.loadingGroupId);
+        loading.setVisibility(View.GONE);
+        View empty = mEmptyView.findViewById(sEmptyLayoutConfig.emptyGroupId);
+        empty.setVisibility(View.GONE);
+        View error = mEmptyView.findViewById(sEmptyLayoutConfig.errorGroupId);
+        error.setVisibility(View.GONE);
+        switch (state) {
+            case 0:
+                loading.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                empty.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                error.setVisibility(View.VISIBLE);
+                break;
+            default:
+        }
+        mIsUseEmpty = true;
     }
 
     /**
@@ -1406,8 +1525,12 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      *
      * @return The view to show if the adapter is empty.
      */
-    public View getEmptyView() {
+    public FrameLayout getEmptyLayout() {
         return mEmptyLayout;
+    }
+
+    public View getEmptyView() {
+        return mEmptyView;
     }
 
     @Deprecated
@@ -1431,18 +1554,20 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         if (mLoadMoreView.getLoadMoreStatus() != LoadMoreView.STATUS_DEFAULT) {
             return;
         }
-        mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
-        if (!mLoading) {
-            mLoading = true;
-            if (getRecyclerView() != null) {
-                getRecyclerView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRequestLoadMoreListener.onLoadMoreRequested();
-                    }
-                });
-            } else {
-                mRequestLoadMoreListener.onLoadMoreRequested();
+        if (!usePaged) {
+            mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
+            if (!mLoading) {
+                mLoading = true;
+                if (getRecyclerView() != null) {
+                    getRecyclerView().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRequestLoadMoreListener.onLoadMoreRequested();
+                        }
+                    });
+                } else {
+                    mRequestLoadMoreListener.onLoadMoreRequested();
+                }
             }
         }
     }
@@ -1901,7 +2026,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * @param view The view whihin the ItemView that was clicked
          * @param position The position of the view int the adapter
          */
-        void onItemChildClick(BaseQuickAdapter<T,? extends BaseViewHolder> adapter,View view,int position);
+        void onItemChildClick(T item,View view,int position);
     }
 
     /**
@@ -1914,12 +2039,11 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * callback method to be invoked when an item in this view has been
          * click and held
          *
-         * @param adapter this BaseQuickAdapter adapter
          * @param view The childView whihin the itemView that was clicked and held.
          * @param position The position of the view int the adapter
          * @return true if the callback consumed the long click ,false otherwise
          */
-        boolean onItemChildLongClick(BaseQuickAdapter<T,? extends BaseViewHolder> adapter,View view,int position);
+        boolean onItemChildLongClick(T item,View view,int position);
     }
 
     /**
@@ -1936,7 +2060,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * @param position The position of the view int the adapter
          * @return true if the callback consumed the long click ,false otherwise
          */
-        boolean onItemLongClick(BaseQuickAdapter<T,? extends BaseViewHolder> adapter,View view,int position);
+        boolean onItemLongClick(T item,View view,int position);
     }
 
     /**
@@ -1954,7 +2078,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
          * will be a view provided by the adapter)
          * @param position The position of the view in the adapter.
          */
-        void onItemClick(BaseQuickAdapter<T,? extends BaseViewHolder> adapter,View view,int position);
+        void onItemClick(T item,View view,int position);
     }
 
     /**

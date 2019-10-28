@@ -1,14 +1,12 @@
 package com.chad.library.adapter.base;
 
-import android.support.annotation.IntRange;
-import android.support.annotation.LayoutRes;
 import android.util.SparseIntArray;
 import android.view.ViewGroup;
-
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
 import com.chad.library.adapter.base.entity.IExpandable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.chad.library.adapter.base.entity.SectionMultiEntity;
-
 import java.util.List;
 
 /**
@@ -41,7 +39,7 @@ public abstract class BaseSectionMultiItemQuickAdapter<T extends SectionMultiEnt
 
     @Override
     protected int getDefItemViewType(int position) {
-        T item = mData.get(position);
+        T item = getItem(position);
 
         if (item != null) {
             // check the item type include header or not

@@ -1,14 +1,12 @@
 package com.chad.baserecyclerviewadapterhelper.adapter;
 
-import android.support.annotation.Nullable;
-
+import androidx.annotation.Nullable;
 import com.chad.baserecyclerviewadapterhelper.adapter.provider.ImgItemProvider;
 import com.chad.baserecyclerviewadapterhelper.adapter.provider.TextImgItemProvider;
 import com.chad.baserecyclerviewadapterhelper.adapter.provider.TextItemProvider;
 import com.chad.baserecyclerviewadapterhelper.entity.NormalMultipleEntity;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.MultipleItemRvAdapter;
-
 import java.util.List;
 
 /**

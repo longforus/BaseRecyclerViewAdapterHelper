@@ -2,11 +2,11 @@ package com.chad.baserecyclerviewadapterhelper;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.chad.baserecyclerviewadapterhelper.adapter.HomeAdapter;
 import com.chad.baserecyclerviewadapterhelper.entity.HomeItem;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -42,9 +42,9 @@ public class HomeActivity extends AppCompatActivity {
         homeAdapter.openLoadAnimation();
         View top = getLayoutInflater().inflate(R.layout.top_view, (ViewGroup) mRecyclerView.getParent(), false);
         homeAdapter.addHeaderView(top);
-        homeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        homeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<HomeItem>() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter,View view,int position) {
+            public void onItemClick(HomeItem adapter, View view, int position) {
                 Intent intent = new Intent(HomeActivity.this, ACTIVITY[position]);
                 startActivity(intent);
             }

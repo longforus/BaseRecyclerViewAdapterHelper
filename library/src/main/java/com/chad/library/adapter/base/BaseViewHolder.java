@@ -20,11 +20,6 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
-import android.support.annotation.StringRes;
-import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
 import android.util.SparseArray;
 import android.view.View;
@@ -37,7 +32,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.StringRes;
+import androidx.recyclerview.widget.RecyclerView;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -51,29 +50,32 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     /**
      * Views indexed with their IDs
      */
-    private final SparseArray<View> views;
+    protected final SparseArray<View> views;
 
     public Set<Integer> getNestViews() {
         return nestViews;
     }
 
-    private final HashSet<Integer> nestViews;
+    protected final HashSet<Integer> nestViews;
 
-    private final LinkedHashSet<Integer> childClickViewIds;
+    protected final LinkedHashSet<Integer> childClickViewIds;
 
-    private final LinkedHashSet<Integer> itemChildLongClickViewIds;
-    private BaseQuickAdapter adapter;
-    /**
-     * use itemView instead
-     */
-    @Deprecated
-    public View convertView;
+    protected final LinkedHashSet<Integer> itemChildLongClickViewIds;
+    protected BaseQuickAdapter adapter;
+
 
     /**
      * Package private field to retain the associated user object and detect a change
      */
-    private Object associatedObject;
+    protected Object associatedObject;
 
+    public SparseArray<View> getViews() {
+        return views;
+    }
+
+    public BaseQuickAdapter getAdapter() {
+        return adapter;
+    }
 
     public BaseViewHolder(final View view) {
         super(view);
@@ -81,9 +83,6 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         this.childClickViewIds = new LinkedHashSet<>();
         this.itemChildLongClickViewIds = new LinkedHashSet<>();
         this.nestViews = new HashSet<>();
-        convertView = view;
-
-
     }
 
     private int getClickPosition() {
@@ -101,16 +100,6 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return childClickViewIds;
     }
 
-    /**
-     * use itemView instead
-     *
-     * @return the ViewHolder root view
-     */
-    @Deprecated
-    public View getConvertView() {
-
-        return convertView;
-    }
 
     /**
      * Will set the text of a TextView.

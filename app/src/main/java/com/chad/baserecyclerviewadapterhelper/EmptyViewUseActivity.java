@@ -2,8 +2,8 @@ package com.chad.baserecyclerviewadapterhelper;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -68,11 +68,11 @@ public class EmptyViewUseActivity extends BaseActivity implements View.OnClickLi
             @Override
             public void run() {
                 if (mError) {
-                    mQuickAdapter.setEmptyView(errorView);
+                    mQuickAdapter.configEmptyView(errorView);
                     mError = false;
                 } else {
                     if (mNoData) {
-                        mQuickAdapter.setEmptyView(notDataView);
+                        mQuickAdapter.configEmptyView(notDataView);
                         mNoData = false;
                     } else {
                         mQuickAdapter.setNewData(DataServer.getSampleData(10));

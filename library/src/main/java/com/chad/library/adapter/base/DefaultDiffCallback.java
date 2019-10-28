@@ -1,8 +1,8 @@
 package com.chad.library.adapter.base;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 
 public class DefaultDiffCallback<T> extends DiffUtil.ItemCallback<T> {
 

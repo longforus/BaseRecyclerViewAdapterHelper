@@ -4,13 +4,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
-
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.chad.baserecyclerviewadapterhelper.adapter.ItemDragAdapter;
 import com.chad.baserecyclerviewadapterhelper.base.BaseActivity;
 import com.chad.baserecyclerviewadapterhelper.util.ToastUtils;
@@ -19,7 +18,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
-
 import java.util.ArrayList;
 import java.util.List;
 

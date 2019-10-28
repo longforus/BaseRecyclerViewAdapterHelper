@@ -1,9 +1,11 @@
 package com.chad.library.adapter.base;
 
-import android.support.annotation.IntRange;
-import android.support.annotation.LayoutRes;
 import android.util.SparseIntArray;
 import android.view.ViewGroup;
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 import com.chad.library.adapter.base.entity.IExpandable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import java.util.List;
@@ -27,13 +29,22 @@ public abstract class BaseMultiItemQuickAdapter<T extends MultiItemEntity, K ext
      *
      * @param data A new list is created out of this one to avoid mutable list
      */
+    public BaseMultiItemQuickAdapter(List<T> data,@Nullable DiffUtil.ItemCallback<T> diffCallback) {
+        super(0,data,diffCallback);
+    }
+    /**
+     * Same as QuickAdapter#QuickAdapter(Context,int) but with
+     * some initialization data.
+     *
+     * @param data A new list is created out of this one to avoid mutable list
+     */
     public BaseMultiItemQuickAdapter(List<T> data) {
-        super(data);
+        this(data,null);
     }
 
     @Override
     protected int getDefItemViewType(int position) {
-        T item = mData.get(position);
+        T item = getItem(position);
         if (item != null) {
             return item.getItemType();
         }

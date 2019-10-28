@@ -1,19 +1,16 @@
 package com.chad.baserecyclerviewadapterhelper;
 
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
-
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.chad.baserecyclerviewadapterhelper.adapter.SectionAdapter;
 import com.chad.baserecyclerviewadapterhelper.base.BaseActivity;
 import com.chad.baserecyclerviewadapterhelper.data.DataServer;
 import com.chad.baserecyclerviewadapterhelper.decoration.GridSectionAverageGapItemDecoration;
 import com.chad.baserecyclerviewadapterhelper.entity.MySection;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-
-import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 /**
@@ -37,7 +34,7 @@ public class SectionUseActivity extends BaseActivity {
 
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<MySection>() {
             @Override
-            public void onItemClick(BaseQuickAdapter<MySection,? extends BaseViewHolder> adapter,View view,int position) {
+            public void onItemClick(MySection item, View view, int position) {
                 MySection mySection = mData.get(position);
                 if (mySection.isHeader)
                     Toast.makeText(SectionUseActivity.this, mySection.header, Toast.LENGTH_LONG).show();
@@ -47,7 +44,7 @@ public class SectionUseActivity extends BaseActivity {
         });
         sectionAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener<MySection>() {
             @Override
-            public void onItemChildClick(BaseQuickAdapter<MySection,? extends BaseViewHolder> adapter,View view,int position) {
+            public void onItemChildClick(MySection item, View view, int position) {
                 Toast.makeText(SectionUseActivity.this, "onItemChildClick" + position, Toast.LENGTH_LONG).show();
             }
         });
