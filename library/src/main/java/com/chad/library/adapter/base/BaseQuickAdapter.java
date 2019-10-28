@@ -790,18 +790,19 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
 
     protected PagedList<T> mCurrentList;
 
+
     @Override
-    public void onCurrentListChanged(@Nullable PagedList<T> currentList) {
-        if (mCurrentList != currentList) {
+    public void onCurrentListChanged(@Nullable PagedList<T> previousList,@Nullable PagedList<T> currentList) {
+        if (previousList != currentList) {
             mCurrentList = currentList;
-            if (mCurrentList == null || mCurrentList.size() == 0) {
+            if (currentList == null || currentList.size() == 0) {
                 //setEnableLoadMore(false);
                 setEmptyViewState(0);
                 if (getAdapterCount() != 0) {
                     mLoadMoreView.setLoadMoreStatus(LoadMoreView.STATUS_LOADING);
                 }
-                if (mCurrentList != null) {
-                    mCurrentList.addWeakCallback(null,new PagedList.Callback() {
+                if (currentList != null) {
+                    currentList.addWeakCallback(null,new PagedList.Callback() {
                         @Override
                         public void onChanged(int position,int count) {
                             onPagedListOnChanged(position,count);
@@ -821,8 +822,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             }
         }
     }
-
-
 
     protected void onPagedListOnRemoved(int position,int count) {
 
