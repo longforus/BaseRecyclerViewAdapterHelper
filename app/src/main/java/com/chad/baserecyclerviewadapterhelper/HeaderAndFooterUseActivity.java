@@ -1,18 +1,17 @@
 package com.chad.baserecyclerviewadapterhelper;
 
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.chad.baserecyclerviewadapterhelper.adapter.HeaderAndFooterAdapter;
 import com.chad.baserecyclerviewadapterhelper.base.BaseActivity;
 import com.chad.baserecyclerviewadapterhelper.data.DataServer;
 import com.chad.baserecyclerviewadapterhelper.entity.Status;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 
 /**
  * https://github.com/CymChad/BaseRecyclerViewAdapterHelper
@@ -107,7 +106,7 @@ public class HeaderAndFooterUseActivity extends BaseActivity {
 //        });
         headerAndFooterAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<Status>() {
             @Override
-            public void onItemClick(BaseQuickAdapter<Status,? extends BaseViewHolder> adapter,View view,int position) {
+            public void onItemClick(Status item,View view,int position) {
                 headerAndFooterAdapter.setNewData(DataServer.getSampleData(PAGE_SIZE));
                 Toast.makeText(HeaderAndFooterUseActivity.this, "" + Integer.toString(position), Toast.LENGTH_LONG).show();
             }

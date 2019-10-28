@@ -113,7 +113,9 @@ public abstract class BaseMultiItemQuickAdapter<T extends MultiItemEntity, K ext
         int position = getParentPosition(child);
         if (position >= 0) {
             IExpandable parent = (IExpandable) mData.get(position);
-            parent.getSubItems().remove(child);
+            if (parent != child) {
+                parent.getSubItems().remove(child);
+            }
         }
     }
 

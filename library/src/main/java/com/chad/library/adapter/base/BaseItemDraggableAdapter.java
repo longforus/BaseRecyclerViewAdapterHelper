@@ -1,12 +1,12 @@
 package com.chad.library.adapter.base;
 
 import android.graphics.Canvas;
-import android.view.MotionEvent;
-import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.core.view.MotionEventCompat;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import android.view.MotionEvent;
+import android.view.View;
 import com.chad.library.R;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
@@ -51,7 +51,7 @@ public abstract class BaseItemDraggableAdapter<T, K extends BaseViewHolder> exte
      * @see #getDefItemViewType(int)
      */
     @Override
-    public void onBindViewHolder(K holder, int position) {
+    public void onBindViewHolder(@NonNull K holder, int position) {
         super.onBindViewHolder(holder, position);
         int viewType = holder.getItemViewType();
 
@@ -237,15 +237,14 @@ public abstract class BaseItemDraggableAdapter<T, K extends BaseViewHolder> exte
     }
 
     public void onItemSwiped(RecyclerView.ViewHolder viewHolder) {
-        int pos = getViewHolderPosition(viewHolder);
+        final int pos = getViewHolderPosition(viewHolder);
         if (inRange(pos)) {
             mData.remove(pos);
             notifyItemRemoved(viewHolder.getAdapterPosition());
-        }
 
-
-        if (mOnItemSwipeListener != null && itemSwipeEnabled) {
-            mOnItemSwipeListener.onItemSwiped(viewHolder, getViewHolderPosition(viewHolder));
+            if (mOnItemSwipeListener != null && itemSwipeEnabled) {
+                mOnItemSwipeListener.onItemSwiped(viewHolder, pos);
+            }
         }
     }
 
