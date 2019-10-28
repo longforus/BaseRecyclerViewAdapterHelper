@@ -429,7 +429,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
                             return false;
                         }
                         position -= adapter.getHeaderLayoutCount();
-                        return adapter.getOnItemChildLongClickListener().onItemChildLongClick(adapter, v, position);
+                        return adapter.getOnItemChildLongClickListener().onItemChildLongClick(adapter.getItem(position), v, position);
                     }
                 });
             }
