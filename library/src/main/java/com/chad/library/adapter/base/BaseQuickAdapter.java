@@ -541,31 +541,30 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         notifyDataSetChanged();
     }
 
-
     /**
      * use Diff setting up a new instance to data
      *
      * @param baseQuickDiffCallback implementation {@link BaseQuickDiffCallback}
      */
     public void setNewDiffData(@NonNull BaseQuickDiffCallback<T> baseQuickDiffCallback) {
-        setNewDiffData(baseQuickDiffCallback, false);
+        setNewDiffData(baseQuickDiffCallback,false);
     }
 
     /**
      * use Diff setting up a new instance to data.
-     * this is sync, if you need use async, see {@link #setNewDiffData(DiffUtil.DiffResult, List)}.
+     * this is sync, if you need use async, see {@link #setNewDiffData(DiffUtil.DiffResult,List)}.
      *
      * @param baseQuickDiffCallback implementation {@link BaseQuickDiffCallback}.
      * @param detectMoves Whether to detect the movement of the Item
      */
-    public void setNewDiffData(@NonNull BaseQuickDiffCallback<T> baseQuickDiffCallback, boolean detectMoves) {
+    public void setNewDiffData(@NonNull BaseQuickDiffCallback<T> baseQuickDiffCallback,boolean detectMoves) {
         if (getEmptyViewCount() == 1) {
             // If the current view is an empty view, set the new data directly without diff
             setNewData(baseQuickDiffCallback.getNewList());
             return;
         }
         baseQuickDiffCallback.setOldList(this.getData());
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(baseQuickDiffCallback, detectMoves);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(baseQuickDiffCallback,detectMoves);
         diffResult.dispatchUpdatesTo(new BaseQuickAdapterListUpdateCallback(this));
         mData = baseQuickDiffCallback.getNewList();
     }
@@ -580,7 +579,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * @param diffResult DiffResult
      * @param newData New Data
      */
-    public void setNewDiffData(@NonNull DiffUtil.DiffResult diffResult, @NonNull List<T> newData) {
+    public void setNewDiffData(@NonNull DiffUtil.DiffResult diffResult,@NonNull List<T> newData) {
         if (getEmptyViewCount() == 1) {
             // If the current view is an empty view, set the new data directly without diff
             setNewData(newData);
@@ -789,7 +788,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     public static EmptyLayoutConfig sEmptyLayoutConfig;
 
     protected PagedList<T> mCurrentList;
-
 
     @Override
     public void onCurrentListChanged(@Nullable PagedList<T> previousList,@Nullable PagedList<T> currentList) {
@@ -1061,10 +1059,8 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         autoLoadMore(position);
         int viewType = holder.getItemViewType();
 
+        T item = getItem(position - getHeaderLayoutCount());
         switch (viewType) {
-            case 0:
-                convert(holder,getItem(position - getHeaderLayoutCount()));
-                break;
             case LOADING_VIEW:
                 mLoadMoreView.convert(holder);
                 break;
@@ -1074,11 +1070,15 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
                 break;
             case FOOTER_VIEW:
                 break;
+            case 0:
             default:
-                convert(holder,getItem(position - getHeaderLayoutCount()));
+                if (item != null) {
+                    convert(holder,item);
+                }
                 break;
         }
     }
+
     /**
      * To bind different types of holder and solve different the bind events
      *
@@ -1086,16 +1086,16 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * update using the payload info.  If the payload is empty,  Adapter run a full bind.
      *
      * @param holder The ViewHolder which should be updated to represent the contents of the
-     *               item at the given position in the data set.
+     * item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      * @param payloads A non-null list of merged payloads. Can be empty list if requires full
-     *                 update.
+     * update.
      * @see #getDefItemViewType(int)
      */
     @Override
-    public void onBindViewHolder(@NonNull K holder, int position, @NonNull List<Object> payloads) {
+    public void onBindViewHolder(@NonNull K holder,int position,@NonNull List<Object> payloads) {
         if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position);
+            onBindViewHolder(holder,position);
             return;
         }
         //Add up fetch logic, almost like load more, but simpler.
@@ -1105,9 +1105,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         int viewType = holder.getItemViewType();
 
         switch (viewType) {
-            case 0:
-                convertPayloads(holder, getItem(position - getHeaderLayoutCount()), payloads);
-                break;
             case LOADING_VIEW:
                 mLoadMoreView.convert(holder);
                 break;
@@ -1117,8 +1114,9 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
                 break;
             case FOOTER_VIEW:
                 break;
+            case 0:
             default:
-                convertPayloads(holder, getItem(position - getHeaderLayoutCount()), payloads);
+                convertPayloads(holder,getItem(position - getHeaderLayoutCount()),payloads);
                 break;
         }
     }
@@ -1137,7 +1135,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
                         return;
                     }
                     position -= getHeaderLayoutCount();
-                    setOnItemClick(v, position);
+                    setOnItemClick(v,position);
                 }
             });
         }
@@ -1150,7 +1148,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
                         return false;
                     }
                     position -= getHeaderLayoutCount();
-                    return setOnItemLongClick(v, position);
+                    return setOnItemLongClick(v,position);
                 }
             });
         }
@@ -1791,25 +1789,24 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
      * @param helper A fully initialized helper.
      * @param item The item that needs to be displayed.
      */
-    protected abstract void convert(@NonNull K helper,T item);
-
+    protected abstract void convert(@NonNull K helper,@NonNull T item);
 
     /**
      * Optional implementation this method and use the helper to adapt the view to the given item.
      *
-     * If {@link DiffUtil.Callback#getChangePayload(int, int)} is implemented,
-     * then {@link BaseQuickAdapter#convert(BaseViewHolder, Object)} will not execute, and will
+     * If {@link DiffUtil.Callback#getChangePayload(int,int)} is implemented,
+     * then {@link BaseQuickAdapter#convert(BaseViewHolder,Object)} will not execute, and will
      * perform this method, Please implement this method for partial refresh.
      *
-     * If use {@link RecyclerView.Adapter#notifyItemChanged(int, Object)} with payload,
+     * If use {@link RecyclerView.Adapter#notifyItemChanged(int,Object)} with payload,
      * Will execute this method.
      *
-     *
-     * @param helper   A fully initialized helper.
-     * @param item     The item that needs to be displayed.
+     * @param helper A fully initialized helper.
+     * @param item The item that needs to be displayed.
      * @param payloads payload info.
      */
-    protected void convertPayloads(@NonNull K helper, T item, @NonNull List<Object> payloads) {}
+    protected void convertPayloads(@NonNull K helper,T item,@NonNull List<Object> payloads) {
+    }
 
     /**
      * get the specific view by position,e.g. getViewByPosition(2, R.id.textView)
@@ -1995,7 +1992,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         if (item == null || !isExpandable(item)) {
             return 0;
         }
-        IExpandable expandable = (IExpandable) item;
+        IExpandable expandable = (IExpandable)item;
         if (!expandable.isExpanded()) {
             return 0;
         }
@@ -2004,7 +2001,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         T itemTemp;
         for (int i = position + 1, n = getAdapterCount(); i < n; i++) {
             itemTemp = mData.get(i);
-            if (itemTemp instanceof IExpandable && ((IExpandable) itemTemp).getLevel() == itemLevel) {
+            if (itemTemp instanceof IExpandable && ((IExpandable)itemTemp).getLevel() == itemLevel) {
                 break;
             }
             collapseList.add(itemTemp);
