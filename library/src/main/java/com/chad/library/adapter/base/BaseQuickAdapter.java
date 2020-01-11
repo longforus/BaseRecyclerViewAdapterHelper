@@ -1058,8 +1058,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         //Do not move position, need to change before LoadMoreView binding
         autoLoadMore(position);
         int viewType = holder.getItemViewType();
-
-        T item = getItem(position - getHeaderLayoutCount());
         switch (viewType) {
             case LOADING_VIEW:
                 mLoadMoreView.convert(holder);
@@ -1072,6 +1070,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
                 break;
             case 0:
             default:
+                T item = getItem(position - getHeaderLayoutCount());
                 if (item != null) {
                     convert(holder,item);
                 }
