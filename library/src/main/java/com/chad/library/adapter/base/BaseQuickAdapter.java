@@ -177,11 +177,28 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             throw new IllegalStateException("Don't bind twice");
         }
         setRecyclerView(recyclerView);
-        getRecyclerView().setAdapter(this);
         if (sEmptyLayoutConfig != null) {
             setEmptyView(sEmptyLayoutConfig.layoutID,(ViewGroup)getRecyclerView().getParent());
         }
+        getRecyclerView().setAdapter(this);
     }
+
+    public void notifyChanged(int pos){
+        notifyItemChanged(pos-mDataObserverProxy.headerCount);
+    }
+
+    public void notifyInserted(int pos){
+        notifyItemInserted(pos-mDataObserverProxy.headerCount);
+    }
+
+    public void notifyRemoved(int pos){
+        notifyItemRemoved(pos-mDataObserverProxy.headerCount);
+    }
+
+    public void notifyMoved(int fromPosition, int toPosition){
+        notifyItemMoved(fromPosition-mDataObserverProxy.headerCount,toPosition-mDataObserverProxy.headerCount);
+    }
+
 
     /**
      * @see #setOnLoadMoreListener(RequestLoadMoreListener,RecyclerView)
@@ -526,6 +543,16 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         this(layoutResId,null,null);
     }
 
+    protected AdapterDataObserverProxy mDataObserverProxy;
+    public RecyclerView.AdapterDataObserver srcObserver;
+
+    @Override
+    public void registerAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
+        srcObserver = observer;
+        mDataObserverProxy = new AdapterDataObserverProxy(observer,getHeaderLayoutCount()+getEmptyViewCount());
+        super.registerAdapterDataObserver(mDataObserverProxy);
+    }
+
     /**
      * setting up a new instance to data;
      */
@@ -714,23 +741,7 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         }
     }
 
-    /**
-     * if setHeadView will be return 1 if not will be return 0.
-     * notice: Deprecated! Use {@link ViewGroup#getChildCount()} of {@link #getHeaderLayout()} to replace.
-     */
-    @Deprecated
-    public int getHeaderViewsCount() {
-        return getHeaderLayoutCount();
-    }
 
-    /**
-     * if mFooterLayout will be return 1 or not will be return 0.
-     * notice: Deprecated! Use {@link ViewGroup#getChildCount()} of {@link #getFooterLayout()} to replace.
-     */
-    @Deprecated
-    public int getFooterViewsCount() {
-        return getFooterLayoutCount();
-    }
 
     /**
      * if addHeaderView will be return 1, if not will be return 0
@@ -1129,11 +1140,11 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int position = baseViewHolder.getLayoutPosition();
+                    int position = baseViewHolder.getAdapterPosition();
                     if (position == RecyclerView.NO_POSITION) {
                         return;
                     }
-                    position -= getHeaderLayoutCount();
+                    //position -= getHeaderLayoutCount();
                     setOnItemClick(v,position);
                 }
             });
@@ -1142,11 +1153,11 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    int position = baseViewHolder.getLayoutPosition();
+                    int position = baseViewHolder.getAdapterPosition();
                     if (position == RecyclerView.NO_POSITION) {
                         return false;
                     }
-                    position -= getHeaderLayoutCount();
+                    //position -= getHeaderLayoutCount();
                     return setOnItemLongClick(v,position);
                 }
             });

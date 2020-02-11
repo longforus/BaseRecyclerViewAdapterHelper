@@ -29,12 +29,12 @@ dependencies {
     def recyclerview_version = "1.0.0"
 
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    def paging_version = "2.1.0"
+    def paging_version = "2.1.1"
 
     implementation "androidx.paging:paging-runtime:$paging_version" // For Kotlin use paging-runtime-ktx
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     def cardview_version = "1.0.0"
-
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation "androidx.cardview:cardview:$cardview_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.kyleduo.switchbutton:library:2.0.0'
