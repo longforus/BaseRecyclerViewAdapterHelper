@@ -59,7 +59,7 @@ dependencies {
 apply plugin: 'maven'
 def GROUP = "com.github.CymChad"
 def POM_ARTIFACT_ID = 'BaseRecyclerViewAdapterHelper'
-def VERSION_CODE = "2.9.49-androidx-xm7"
+def VERSION_CODE = "2.9.49-androidx-xm8"
 def UPLOAD_DESC = "修改自动滚动的bug,修改position取值"
 def properties = new Properties()
 def inputStream = project.rootProject.file('local.properties').newDataInputStream()

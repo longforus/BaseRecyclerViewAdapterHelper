@@ -37,6 +37,7 @@
         <activity android:name=".UpFetchUseActivity" />
         <activity android:name=".SectionMultipleItemUseActivity" />
         <activity android:name=".DiffUtilActivity" />
+        <activity android:name=".MultipleItemAndDragUseActivity" />
     </application>
 
 </manifest>

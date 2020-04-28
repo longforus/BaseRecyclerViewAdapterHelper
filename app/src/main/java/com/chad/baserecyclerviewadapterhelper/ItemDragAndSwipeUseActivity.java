@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,58 +35,59 @@ public class ItemDragAndSwipeUseActivity extends BaseActivity {
         setBackBtn();
         setTitle("ItemDrag  And Swipe");
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.rv_list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,4));
         List<String> mData = generateData(50);
         OnItemDragListener listener = new OnItemDragListener() {
             @Override
             public void onItemDragStart(RecyclerView.ViewHolder viewHolder, int pos) {
                 Log.d(TAG, "drag start");
                 BaseViewHolder holder = ((BaseViewHolder) viewHolder);
-//                holder.setTextColor(R.id.tv, Color.WHITE);
+
+                //                holder.setTextColor(R.id.tv, Color.WHITE);
             }
 
             @Override
             public void onItemDragMoving(RecyclerView.ViewHolder source, int from, RecyclerView.ViewHolder target, int to) {
-                Log.d(TAG, "move from: " + source.getAdapterPosition() + " to: " + target.getAdapterPosition());
+                //Log.d(TAG, "move from: " + source.getAdapterPosition() + " to: " + target.getAdapterPosition());
             }
 
             @Override
             public void onItemDragEnd(RecyclerView.ViewHolder viewHolder, int pos) {
                 Log.d(TAG, "drag end");
                 BaseViewHolder holder = ((BaseViewHolder) viewHolder);
-//                holder.setTextColor(R.id.tv, Color.BLACK);
+                //                holder.setTextColor(R.id.tv, Color.BLACK);
             }
         };
-        final Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setTextSize(20);
-        paint.setColor(Color.BLACK);
-        OnItemSwipeListener onItemSwipeListener = new OnItemSwipeListener() {
-            @Override
-            public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
-                Log.d(TAG, "view swiped start: " + pos);
-                BaseViewHolder holder = ((BaseViewHolder) viewHolder);
-//                holder.setTextColor(R.id.tv, Color.WHITE);
-            }
-
-            @Override
-            public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {
-                Log.d(TAG, "View reset: " + pos);
-                BaseViewHolder holder = ((BaseViewHolder) viewHolder);
-//                holder.setTextColor(R.id.tv, Color.BLACK);
-            }
-
-            @Override
-            public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
-                Log.d(TAG, "View Swiped: " + pos);
-            }
-
-            @Override
-            public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
-                canvas.drawColor(ContextCompat.getColor(ItemDragAndSwipeUseActivity.this, R.color.color_light_blue));
-//                canvas.drawText("Just some text", 0, 40, paint);
-            }
-        };
+        //final Paint paint = new Paint();
+        //paint.setAntiAlias(true);
+        //paint.setTextSize(20);
+        //paint.setColor(Color.BLACK);
+        //OnItemSwipeListener onItemSwipeListener = new OnItemSwipeListener() {
+        //    @Override
+        //    public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
+        //        Log.d(TAG, "view swiped start: " + pos);
+        //        BaseViewHolder holder = ((BaseViewHolder) viewHolder);
+        //        //                holder.setTextColor(R.id.tv, Color.WHITE);
+        //    }
+        //
+        //    @Override
+        //    public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {
+        //        Log.d(TAG, "View reset: " + pos);
+        //        BaseViewHolder holder = ((BaseViewHolder) viewHolder);
+        //        //                holder.setTextColor(R.id.tv, Color.BLACK);
+        //    }
+        //
+        //    @Override
+        //    public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
+        //        Log.d(TAG, "View Swiped: " + pos);
+        //    }
+        //
+        //    @Override
+        //    public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
+        //        canvas.drawColor(ContextCompat.getColor(ItemDragAndSwipeUseActivity.this, R.color.color_light_blue));
+        //        //                canvas.drawText("Just some text", 0, 40, paint);
+        //    }
+        //};
 
         ItemDragAdapter mAdapter = new ItemDragAdapter(mData);
         ItemDragAndSwipeCallback mItemDragAndSwipeCallback = new ItemDragAndSwipeCallback(mAdapter);
@@ -94,25 +96,24 @@ public class ItemDragAndSwipeUseActivity extends BaseActivity {
 
         //mItemDragAndSwipeCallback.setDragMoveFlags(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT | ItemTouchHelper.UP | ItemTouchHelper.DOWN);
         mItemDragAndSwipeCallback.setSwipeMoveFlags(ItemTouchHelper.START | ItemTouchHelper.END);
-        mAdapter.enableSwipeItem();
-        mAdapter.setOnItemSwipeListener(onItemSwipeListener);
+        //mAdapter.enableSwipeItem();
+        //mAdapter.setOnItemSwipeListener(onItemSwipeListener);
         mAdapter.enableDragItem(mItemTouchHelper);
         mAdapter.setOnItemDragListener(listener);
-//        mRecyclerView.addItemDecoration(new GridItemDecoration(this ,R.drawable.list_divider));
+        //        mRecyclerView.addItemDecoration(new GridItemDecoration(this ,R.drawable.list_divider));
 
         mRecyclerView.setAdapter(mAdapter);
-//        mRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
-//            @Override
-//            public void onSimpleItemClick(final BaseQuickAdapter adapter, final View view, final int position) {
-//                ToastUtils.showShortToast("点击了" + position);
-//            }
-//        });
+        //        mRecyclerView.addOnItemTouchListener(new OnItemClickListener() {
+        //            @Override
+        //            public void onSimpleItemClick(final BaseQuickAdapter adapter, final View view, final int position) {
+        //                ToastUtils.showShortToast("点击了" + position);
+        //            }
+        //        });
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener<String>() {
             @Override
             public void onItemClick(String item,View view,int position) {
                 ToastUtils.showShortToast("点击了" + position);
             }
-
         });
     }
 

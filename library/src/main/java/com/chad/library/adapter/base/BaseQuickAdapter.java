@@ -183,22 +183,21 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
         getRecyclerView().setAdapter(this);
     }
 
-    public void notifyChanged(int pos){
-        notifyItemChanged(pos-mDataObserverProxy.headerCount);
+    public void notifyChanged(int pos) {
+        notifyItemChanged(pos - mDataObserverProxy.headerCount);
     }
 
-    public void notifyInserted(int pos){
-        notifyItemInserted(pos-mDataObserverProxy.headerCount);
+    public void notifyInserted(int pos) {
+        notifyItemInserted(pos - mDataObserverProxy.headerCount);
     }
 
-    public void notifyRemoved(int pos){
-        notifyItemRemoved(pos-mDataObserverProxy.headerCount);
+    public void notifyRemoved(int pos) {
+        notifyItemRemoved(pos - mDataObserverProxy.headerCount);
     }
 
-    public void notifyMoved(int fromPosition, int toPosition){
-        notifyItemMoved(fromPosition-mDataObserverProxy.headerCount,toPosition-mDataObserverProxy.headerCount);
+    public void notifyMoved(int fromPosition,int toPosition) {
+        notifyItemMoved(fromPosition - mDataObserverProxy.headerCount,toPosition - mDataObserverProxy.headerCount);
     }
-
 
     /**
      * @see #setOnLoadMoreListener(RequestLoadMoreListener,RecyclerView)
@@ -549,8 +548,17 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
     @Override
     public void registerAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
         srcObserver = observer;
-        mDataObserverProxy = new AdapterDataObserverProxy(observer,getHeaderLayoutCount()+getEmptyViewCount());
+        mDataObserverProxy = new AdapterDataObserverProxy(observer,getHeaderLayoutCount() + getEmptyViewCount());
         super.registerAdapterDataObserver(mDataObserverProxy);
+    }
+
+    @Override
+    public void unregisterAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
+        if (observer == srcObserver) {
+            super.unregisterAdapterDataObserver(mDataObserverProxy);
+        } else {
+            super.unregisterAdapterDataObserver(observer);
+        }
     }
 
     /**
@@ -740,8 +748,6 @@ public abstract class BaseQuickAdapter<T,K extends BaseViewHolder> extends Paged
             return null;
         }
     }
-
-
 
     /**
      * if addHeaderView will be return 1, if not will be return 0
